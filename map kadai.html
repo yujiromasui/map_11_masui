@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Map&amp;Geolocation</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+body {
+  margin: 0;
+  padding: 0;
+}
+</style>
+</head>
+<body>
+
+<!-- MapArea -->
+<div id="view"></div>
+<div id="myMap" style="width:100%; height:500px"></div>
+<!-- /MapArea -->
+<!-- ButoonArea -->
+<button id="start_tracking">Start</button>
+<button id="stop_tracking">Stop</button>
+<button id="clear_map">Clear</button>
+<div id="speed">0</div>
+
+<!-- /ButoonArea -->
+
+<!-- jQuery&GoogleMapsAPI -->
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<!-- /jQuery&GoogleMapsAPI -->
+<script src="https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=Av9I-dO1ctJECL-nhIOBe_mfycNAkgAAIt-8a99Owxv1I4DraGoPv0BOjiUbhK7o" async defer></script>
+<script src="./js/BmapQuery.js"></script>
+<!-- javascript -->
+<script>
+
+let map;
+
+//1．位置情報の取得に成功した時の処理
+function mapsInit(position) {
+    //lat=緯度、lon=経度 を取得
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+    $("#view").html(`緯度:${lat} 経度:${lon}`);
+
+    //------------------------------------------------------------------------
+    //2. Display Map
+    //------------------------------------------------------------------------
+    map.startMap(lat, lon, "load", 10); //The place is Bellevue.
+
+    //----------------------------------------------------
+    //3. Add Pushpin
+    // map.pin( lat, lon, "color", [drag:true|false], [click:true|false], [hover:true|false], [visible:true|false] );
+    //----------------------------------------------------
+    let pin = map.pin(lat, lon, "#0000ff");
+};
+
+//2． 位置情報の取得に失敗した場合の処理
+function mapsError(error) {
+  let e = "";
+  if (error.code == 1) { //1＝位置情報取得が許可されてない（ブラウザの設定）
+    e = "位置情報が許可されてません";
+  }
+  if (error.code == 2) { //2＝現在地を特定できない
+    e = "現在位置を特定できません";
+  }
+  if (error.code == 3) { //3＝位置情報を取得する前にタイムアウトになった場合
+    e = "位置情報を取得する前にタイムアウトになりました";
+  }
+  alert("エラー：" + e);
+};
+
+//3.位置情報取得オプション
+var set ={
+  enableHighAccuracy: true, //より高精度な位置を求める
+  maximumAge: 20000,        //最後の現在地情報取得が20秒以内であればその情報を再利用する設定
+  timeout: 10000            //10秒以内に現在地情報を取得できなければ、処理を終了
+};
+
+// MAP KADAI.HTML //
+function GetMap(){
+    //------------------------------------------------------------------------
+    //1. Instance
+    //------------------------------------------------------------------------
+    map = new Bmap("#myMap");
+
+    //Main:位置情報を取得する処理 //getCurrentPosition :or: watchPosition
+    navigator.geolocation.getCurrentPosition(mapsInit, mapsError, set);
+}
+
+//****************************************************************************************
+// BingMaps&BmapQuery
+//****************************************************************************************
+//Init
+function GetMap(){
+
+//------------------------------------------------------------------------
+//1. Instance
+//------------------------------------------------------------------------
+const map = new Bmap("#myMap");
+
+//------------------------------------------------------------------------
+//2. Display Map
+//------------------------------------------------------------------------
+map.startMap(35.708733, 139.719649, "load", 15);
+
+//----------------------------------------------------
+//3. Infobox
+//   options = new Array();
+//   options[index] = { lat, lon, width, height, title, pinColor, description };
+//----------------------------------------------------
+const options = [];
+options[0]={
+    "lat":35.710387,
+    "lon":139.723123,
+    "title":"東京麺珍亭本舗 鶴巻町本店",
+    "pinColor":"#ff0000",
+    "height":350,
+    "width":320,
+    "description": '東京麺珍亭本舗<br>〜¥999<br>さっぱりシンプル★★★★★<br>コスパ★★★★★<br>快適さ★★★☆☆<br>SNS: <a href = "https://twitter.com/menchintei?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor">公式Twitter</a><br><img src="./picture/menchintei.png" width="300">',
+    "show":false
+};
+options[1]={
+    "lat":35.711518,
+    "lon":139.719432,
+    "title":"武蔵野アブラ學会",
+    "pinColor":"#ff0000",
+    "height":350,
+    "width":320,
+    "description": '武蔵野アブラ學会<br>〜¥999<br>こってりご飯のお供★★★★★<br>コスパ★★★★☆<br>快適さ★☆☆☆☆<br>SNS: <a href = "https://twitter.com/masaotin?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor">公式Twitter</a><br><img src="./picture/gakkai.png" width="300">',
+    "show":false
+};
+options[2]={
+    "lat":35.707395,
+    "lon":139.719754,
+    "title":"油SOBA 図星",
+    "pinColor":"#ff0000",
+    "height":350,
+    "width":320,
+    "description": '油SOBA 図星<br>¥1,000〜<br>高級油そば★★★★★<br>コスパ★★★★☆<br>快適さ★★★★★<br>SNS: <a href = "https://twitter.com/kokorobazuboshi?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor">公式Twitter</a><br><img src="./picture/zuboshi.png" width="300">',
+    "show":false
+};
+
+options[3]={
+    "lat":35.706637,
+    "lon":139.720623,
+    "title":"油そば専門店 麺爺",
+    "pinColor":"#ff0000",
+    "height":350,
+    "width":320,
+    "description": '油そば専門店<br>〜¥999<br>早さ★★★★☆<br>コスパ★★★★☆<br>快適さ★★★☆☆<br>SNS: <a href = "https://twitter.com/menzy_abura">公式Twitter</a><br><img src="./picture/menzy.png" width="300">',
+    "show":false
+};
+
+options[4]={
+    "lat":35.708014,
+    "lon":139.717301,
+    "title":"東京麺珍亭本舗 西早稲田店",
+    "pinColor":"#ff0000",
+    "height":350,
+    "width":320,
+    "description": '東京麺珍亭本舗<br>〜¥999<br>さっぱりシンプル★★★★★<br>コスパ★★★★★<br>快適さ★★★☆☆<br>SNS: <a href = "https://twitter.com/menchintei?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor">公式Twitter</a><br><img src="./picture/menchintei.png" width="300">',
+    "show":false
+};
+
+options[5]={
+    "lat":35.710611,
+    "lon":139.709956,
+    "title":"台湾まぜそば 麺屋 こころ",
+    "pinColor":"#ff0000",
+    "height":350,
+    "width":320,
+    "description": '台湾まぜそば 麺屋 こころ<br>〜¥999<br>味★★★★★<br>ミスチル★★★★★<br>快適さ★★★☆☆<br>HP: <a href = "https://www.menya-cocoro.com/blank-2">公式ホームページ</a><br><img src="./picture/cocoro.png" width="300">',
+    "show":false
+};
+
+options[6]={
+    "lat":35.710021,
+    "lon":139.713991,
+    "title":"らぁ麺やまぐち",
+    "pinColor":"#ff0000",
+    "height":350,
+    "width":320,
+    "description": 'らぁ麺やまぐち<br>¥1,000〜<br>味★★★★★<br>ミシュラン★★★★★<br>雰囲気★★★☆☆<br>SNS: <a href = "https://twitter.com/ramen_yamaguchi">Twitter</a><br><img src="./picture/ramenyamaguchi.png" width="300">',
+    "show":false
+};
+
+options[7]={
+    "lat":35.711191,
+    "lon":139.721896,
+    "title":"ラーメン巌哲",
+    "pinColor":"#ff0000",
+    "height":350,
+    "width":320,
+    "description": 'ラーメン巌哲<br>¥1,000〜<br>味★★★★★<br>上品さ★★★★★<br>雰囲気★★★☆☆<br>SNS: <a href = "https://twitter.com/gantetsu01?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor">Twitter</a><br><img src="./picture/ramengantetsu.png" width="300">',
+    "show":false
+};
+
+options[8]={
+    "lat":35.706519,
+    "lon":139.720549,
+    "title":"メルシー",
+    "pinColor":"#ff0000",
+    "height":350,
+    "width":320,
+    "description": 'メルシー<br>〜¥999<br>味★★★★★<br>安さ★★★★★<br>懐かしさ★★★★★<br>関連ホームページ: <a href = "https://tabelog.com/tokyo/A1305/A130504/13000048/">食べログ</a><br><img src="./picture/mercy.png" width="300">',
+    "show":false
+};
+
+options[9]={
+    "lat":35.706284,
+    "lon":139.719651,
+    "title":"武道家 本店",
+    "pinColor":"#ff0000",
+    "height":350,
+    "width":320,
+    "description": '武道家 本店<br>〜¥999<br>味★★★★★<br>家系★★★★★<br>こってり★★★★★<br>SNS: <a href = "https://twitter.com/budoukawaseda01">Twitter</a><br><img src="./picture/budouka.png" width="300">',
+    "show":false
+};
+
+
+//----------------------------------------------------
+//4. Switch infoboxs
+//   infoboxLayers(options, true); //true=one, false=Multiple
+//----------------------------------------------------
+map.infoboxLayers(options,true);
+
+//3. Tracking Event & Draw
+    //   map.startTracking("color", lineWidth, seconds, console.log[true or false]);
+    //------------------------------------------------------------------------
+    //Start
+    document.getElementById("start_tracking").onclick=function(){
+        map.startTrackingDraw("#ff0000", 3, "#speed", true);
+    };
+    //Stop
+    document.getElementById("stop_tracking").onclick=function(){
+        map.stopTrackingDraw();
+        console.log("TrackData:", map.getTrackingData() );   //option: Get tracking data[Array].
+        console.log("TrackSpeed:", map.getTrackingSpeed() ); //option: Get tracking Speed data[Array].
+    };
+    //Clear Map.
+    document.getElementById("clear_map").onclick=function(){
+        map.clearMap();          //Clear Map.
+        map.clearTrackingData(); //Delete track&Speed data
+    };
+
+
+}
+
+
+
+</script>
+</body>
+</html>
